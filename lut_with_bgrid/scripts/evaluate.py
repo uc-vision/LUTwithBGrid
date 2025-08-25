@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Evaluation script for LUT with Bilateral Grid image enhancement.
 Usage: lut-evaluate --dataset_name fivek --input_color_space sRGB
