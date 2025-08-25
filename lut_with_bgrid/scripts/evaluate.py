@@ -5,20 +5,15 @@ Usage: lut-evaluate --dataset_name fivek --input_color_space sRGB
 """
 
 import argparse
-import glob
 import os
-import numpy as np
-import cv2
 
 import torch
-import torch.nn as nn
-import torchvision.transforms.functional as TF
-from torchvision.utils import save_image
 from torch.utils.data import DataLoader
-from torch import Tensor
+from torchvision.utils import save_image
 
 from lut_with_bgrid import LUTwithBGrid
-from lut_with_bgrid.datasets import ImageDataset_sRGB, ImageDataset_XYZ, ImageDataset_PPR10k
+from lut_with_bgrid.datasets import (ImageDataset_PPR10k, ImageDataset_sRGB,
+                                     ImageDataset_XYZ)
 
 
 def main():

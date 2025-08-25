@@ -5,27 +5,22 @@ Usage: python scripts/train.py --dataset_name fivek --input_color_space sRGB
 """
 
 import argparse
-import os
-import math
 import itertools
+import math
+import os
 import sys
 
-# Add parent directory to path to import the package
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from torch.utils.data import DataLoader
-from torch.autograd import Variable
-
-from lut_with_bgrid import LUTwithBGrid, DeltaE_loss, TV_3D
-from lut_with_bgrid.datasets import *
-
-import torch
-
-import tqdm
-import os
-
-from torch.optim.lr_scheduler import StepLR
 import lpips
+import torch
+import tqdm
+from torch.autograd import Variable
+from torch.optim.lr_scheduler import StepLR
+from torch.utils.data import DataLoader
+
+from lut_with_bgrid import TV_3D, DeltaE_loss, LUTwithBGrid
+from lut_with_bgrid.datasets import (ImageDataset_PPR10k, ImageDataset_sRGB,
+                                     ImageDataset_XYZ)
+
 
 def main():
     """Main function for the training script."""
@@ -96,8 +91,7 @@ def main():
     torch.multiprocessing.set_start_method('spawn', True)
 
     cuda = torch.cuda.is_available()
-    # Tensor type
-    Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
+
 
     # Loss functions
     criterion_pixelwise = torch.nn.MSELoss()
@@ -130,9 +124,9 @@ def main():
         loss_fn_alex.cuda()
         loss_deltaE.cuda()
         TV3.cuda()
-        TV3.weight_r = TV3.weight_r.type(Tensor)
-        TV3.weight_g = TV3.weight_g.type(Tensor)
-        TV3.weight_b = TV3.weight_b.type(Tensor)
+        TV3.weight_r = TV3.weight_r.type(torch.float32)
+        TV3.weight_g = TV3.weight_g.type(torch.float32)
+        TV3.weight_b = TV3.weight_b.type(torch.float32)
 
     optimizer_G = torch.optim.Adam(itertools.chain(lut_bgrid_inst.parameters()), lr=opt.lr)
     scheduler = StepLR(optimizer_G, step_size=100, gamma=0.1)
@@ -208,14 +202,10 @@ def main():
 
         for batch in iterator:
             # Model inputs
-            real_A = Variable(batch["A_input"].type(Tensor))
-            real_B = Variable(batch["A_exptC"].type(Tensor))
+            real_A = Variable(batch["A_input"].type(torch.float32))
+            real_B = Variable(batch["A_exptC"].type(torch.float32))
 
-            if opt.use_mask:
-                mask = Variable(batch["mask"].type(Tensor))
-                mask = torch.sum(mask, 1).unsqueeze(1)
-                weights = torch.ones_like(mask)
-                weights[mask > 0] = 5
+      
 
             if cuda:
                 real_A.cuda()
@@ -228,8 +218,12 @@ def main():
 
             fake_B, lut_weights, grid_weights, g3d_lut, gbilateral = lut_bgrid_inst(real_A)
 
-            # Pixel-wise loss
             if opt.use_mask:
+                mask = Variable(batch["mask"].type(torch.float32))
+                mask = torch.sum(mask, 1).unsqueeze(1)
+                weights = torch.ones_like(mask)
+                weights[mask > 0] = 5
+
                 mse = criterion_pixelwise(fake_B * weights, real_B * weights)
             else:
                 mse = criterion_pixelwise(fake_B, real_B)
@@ -254,8 +248,8 @@ def main():
         lut_bgrid_inst.eval()
         avg_psnr = 0
         for i, batch in enumerate(psnr_dataloader):
-            real_A = Variable(batch["A_input"].type(Tensor))
-            real_B = Variable(batch["A_exptC"].type(Tensor))
+            real_A = Variable(batch["A_input"].type(torch.float32))
+            real_B = Variable(batch["A_exptC"].type(torch.float32))
             fake_B, _, _, _, _ = lut_bgrid_inst(real_A)
 
             fake_B = torch.round(fake_B*255)

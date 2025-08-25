@@ -1,0 +1,81 @@
+[build-system]
+requires = ["hatchling>=1.18.0", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lut-with-bgrid"
+dynamic = ["version"]
+description = "Image-adaptive 3D Lookup Tables for Real-time Image Enhancement with Bilateral Grids"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.8"
+authors = [
+    {name = "Wontae Kim"},
+    {name = "Nam Ik Cho"}
+]
+dependencies = [
+    # Core PyTorch stack
+    "torch>=2.7.0",
+    "torchvision", 
+    "torchaudio",
+    "kornia",
+
+    # Image processing
+    "opencv-python>=4.8.0",
+    "pillow>=9.0.0",
+    "numpy>=1.21.0",
+
+    # Scientific computing
+    "scipy>=1.9.0",
+
+    # Utilities
+    "tqdm>=4.60.0",
+    "ninja>=1.11.0",
+]
+
+[project.scripts]
+lut-demo = "lut_with_bgrid.scripts.demo:main"
+lut-train = "lut_with_bgrid.scripts.train:main"
+lut-evaluate = "lut_with_bgrid.scripts.evaluate:main"
+
+
+
+
+
+[tool.hatch.version]
+path = "lut_with_bgrid/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["lut_with_bgrid"]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "/demo_img",
+    "/figure", 
+    "/pretrained",
+    "/utils",
+]
+
+
+
+# Pixi integration (minimal)
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[tool.pixi.pypi-dependencies]
+lut-with-bgrid = { path = ".", editable = true }
+
+[tool.pixi.system-requirements]
+cuda = "12.1"
+
+[tool.pixi.dependencies]
+python = ">=3.8,<3.13"
+pip = "*"
+cuda = ">=12.1,<13"
+pytorch-gpu = ">=2.7"
+
+
+
+
+

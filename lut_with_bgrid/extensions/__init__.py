@@ -2,9 +2,10 @@
 
 import sys
 import warnings
-import torch
 from pathlib import Path
-from typing import Optional, Any
+from typing import Any, Optional
+
+import torch
 
 # Cache for loaded extensions
 _lut_transform = None

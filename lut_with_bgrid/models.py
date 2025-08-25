@@ -1,11 +1,11 @@
 import torch
-
 import torch.nn as nn
 import torchvision.models as models
 
-
-from .cpp_ext_interface import trilinear_lut_transform, tetrahedral_lut_transform
-from .cpp_ext_interface import trilinear_slice_function, tetrahedral_slice_function
+from .cpp_ext_interface import (tetrahedral_lut_transform,
+                                tetrahedral_slice_function,
+                                trilinear_lut_transform,
+                                trilinear_slice_function)
 
 
 def discriminator_block(in_filters, out_filters, normalization=False):

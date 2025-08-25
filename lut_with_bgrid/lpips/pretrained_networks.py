@@ -1,6 +1,8 @@
 from collections import namedtuple
+
 import torch
 from torchvision import models as tv
+
 
 class squeezenet(torch.nn.Module):
     def __init__(self, requires_grad=False, pretrained=True):

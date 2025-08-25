@@ -1,13 +1,14 @@
 
 from __future__ import absolute_import
 
+import lpips
 import torch
+import torch.nn
 import torch.nn as nn
 from torch.autograd import Variable
-from . import pretrained_networks as pn
-import torch.nn
 
-import lpips
+from . import pretrained_networks as pn
+
 
 def spatial_average(in_tens, keepdim=True):
     return in_tens.mean([2,3],keepdim=keepdim)

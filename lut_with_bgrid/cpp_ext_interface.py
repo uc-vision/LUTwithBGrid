@@ -1,9 +1,10 @@
-import torch
-from torch.amp import custom_fwd, custom_bwd
 from typing import Tuple
 
+import torch
+from torch.amp import custom_bwd, custom_fwd
+
 # Dynamic extension loading - extensions are loaded on first use
-from .extensions import get_lut_transform, get_bilateral_slicing
+from .extensions import get_bilateral_slicing, get_lut_transform
 
 # Get extensions (will build on first use if needed)
 lut_transform = get_lut_transform()

@@ -1,14 +1,15 @@
 
 from __future__ import absolute_import
 
+import os
+from collections import OrderedDict
+
+import lpips
 import numpy as np
 import torch
-from collections import OrderedDict
-from torch.autograd import Variable
 from scipy.ndimage import zoom
+from torch.autograd import Variable
 from tqdm import tqdm
-import lpips
-import os
 
 
 class Trainer():

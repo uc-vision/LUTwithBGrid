@@ -1,7 +1,6 @@
+import kornia
 import torch
 import torch.nn as nn
-
-import kornia
 
 
 class TV_3D(nn.Module):

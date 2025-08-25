@@ -1,14 +1,13 @@
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import numpy as np
 import torch
+from lpips.lpips import *
+from lpips.trainer import *
+
 # from torch.autograd import Variable
 
-from lpips.trainer import *
-from lpips.lpips import *
 
 def normalize_tensor(in_feat,eps=1e-10):
     norm_factor = torch.sqrt(torch.sum(in_feat**2,dim=1,keepdim=True))
@@ -47,8 +46,9 @@ def tensor2tensorlab(image_tensor,to_norm=True,mc_only=False):
     return np2tensor(img_lab)
 
 def tensorlab2tensor(lab_tensor,return_inbnd=False):
-    from skimage import color
     import warnings
+
+    from skimage import color
     warnings.filterwarnings("ignore")
 
     lab = tensor2np(lab_tensor)*100.

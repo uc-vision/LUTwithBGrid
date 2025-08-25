@@ -6,12 +6,11 @@ Usage: lut-demo path/to/image.jpg
 import argparse
 from pathlib import Path
 
+import cv2
 import torch
 import torchvision.transforms.functional as TF
 
 from lut_with_bgrid import LUTwithBGrid
-from PIL import Image
-import cv2
 
 
 def main():
