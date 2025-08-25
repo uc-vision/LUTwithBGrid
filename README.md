@@ -1,11 +1,67 @@
-# Image-adaptive 3D Lookup Tables for Real-time Image Enhancement with Bilateral Grids
+# LUT with Bilateral Grid
 
-## Introduction
-The project provides the official PyTorch implementation with pretrained models for the paper "[Image-adaptive 3D Lookup Tables for Real-time Image Enhancement with Bilateral Grids](https://www.ecva.net/papers/eccv_2024/papers_ECCV/html/6517_ECCV_2024_paper.php)" (accepted by ECCV 2024).
+*Image-adaptive 3D Lookup Tables for Real-time Image Enhancement with Bilateral Grids*
+
+[![PyPI version](https://badge.fury.io/py/lut-with-bgrid.svg)](https://pypi.org/project/lut-with-bgrid/)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+
+A PyTorch implementation of the paper "[Image-adaptive 3D Lookup Tables for Real-time Image Enhancement with Bilateral Grids](https://www.ecva.net/papers/eccv_2024/papers_ECCV/html/6517_ECCV_2024_paper.php)" (ECCV 2024).
+
+## Installation
+
+```bash
+pip install lut-with-bgrid
+```
+
+For development:
+```bash
+git clone https://github.com/your-repo/LUTwithBGrid.git
+cd LUTwithBGrid
+pip install -e .
+```
+
+**Note**: CUDA extensions will be compiled automatically when first used if CUDA is available and `ninja` is installed (`pip install ninja`).
+
+## Quick Start
+
+```python
+import torch
+from lut_with_bgrid import LUTwithBGrid
+
+# Create model
+model = LUTwithBGrid(
+    backbone_type='cnn',
+    backbone_coef=8,
+    lut_n_vertices=17,
+    lut_n_ranks=24,
+    grid_n_vertices=17,
+    grid_n_ranks=24,
+    n_grids=9
+)
+
+# Process image
+image = torch.randn(1, 3, 256, 256)  # [B, C, H, W]
+with torch.no_grad():
+    enhanced_image, lut_weights, grid_weights, lut, grid = model(image)
+```
+
+## Features
+
+- **Dynamic Extension Loading**: CUDA extensions are built automatically on first use
+- **CPU Fallback**: Works without CUDA if extensions can't be built
+- **Modern Packaging**: Uses hatchling build system with pyproject.toml
+- **Flexible Architecture**: Supports different backbone types and configurations
+- **Real-time Performance**: Optimized for fast inference
+
+## Architecture
 
 <p align="center"><img src="figure/overall_structure.png" width="700"></p>
 
-Image enhancement and restoration methods using adaptive 3D lookup tables (3D LUTs) have shown promising results with real-time inferencing. These methods directly transform input pixel values into enhanced ones by using interpolation operations with predicted 3D LUT values. However, it is still challenging to deal with locally different properties of images since most 3D LUT methods are simple color-to-color transforms. Although including spatial information in this transform can be a good solution, it can significantly increase the number of parameters and inference time. To address this issue, we propose an efficient spatial-aware image enhancement model that combines bilateral grids and 3D LUTs. Specifically, we transform bilateral grids into a spatial feature domain to incorporate spatial information in our 3D LUT model. To reduce inference time and save parameters, we use slicing operations in our network architecture instead of the long decoding path of the U-Net architecture used in most existing studies. Our model achieves state-of-the-art performance without increasing parameters and further reduces inference time, as demonstrated by extensive results.
+The model combines bilateral grids with 3D lookup tables for efficient spatial-aware image enhancement. Key innovations:
+
+- **Adaptive 3D LUTs**: Learnable lookup tables that adapt to input images
+- **Bilateral Grids**: Efficient spatial feature representation
+- **Dynamic Extensions**: High-performance CUDA implementations with CPU fallbacks
 
 ## Environment
 - Ubuntu 18.04.5 LTS
